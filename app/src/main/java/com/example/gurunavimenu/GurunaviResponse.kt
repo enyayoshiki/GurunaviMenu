@@ -1,0 +1,32 @@
+package com.example.gurunavimenu
+
+data class GurunaviResponse(
+    val hit_per_page: Int,
+    val page_offset: Int,
+    val total_hit_count: Int,
+    val qrcode: String,
+    val shop_image1: String,
+    val shop_image2: String,
+    val address: String,
+    val budget: Int,
+    val category: String,
+    val credit_card: String,
+    val e_money: String,
+    val fax: String,
+    val holiday: String,
+    val id: String,
+    val latitude: String,
+    val longitude: String,
+    val lunch: Any,
+    val name: String,
+    val name_kana: String,
+    val opentime: String,
+    val parking_lots: String,
+    val party: Int,
+    val tel: String,
+    val tel_sub: String,
+    val update_date: String,
+    val url: String,
+    val url_mobile: String,
+    val areaname_s: String
+)
