@@ -15,9 +15,9 @@ import com.squareup.picasso.Picasso
 class RecyclerViewAdapter(private val context: Context) :
     RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
-    private val items = mutableListOf<GurunaviResponse>()
+    private val items = mutableListOf<Rest>()
 
-    fun refresh(list: List<GurunaviResponse>) {
+    fun refresh(list: List<Rest>) {
         items.apply {
             clear()
             addAll(list)
@@ -43,10 +43,10 @@ class RecyclerViewAdapter(private val context: Context) :
 
     private fun onBindViewHolder(holder: ItemViewHolder, position: Int) {
         val data = items[position]
-        Picasso.get().load(data.shop_image1).into(holder.rImage)
+        Picasso.get().load(data.image_url.qrcode).into(holder.rImage)
         holder.rTitle.text = data.name
         holder.rCategory.text = data.category
-        holder.rArea.text = data.areaname_s
+        holder.rArea.text = data.code.areaname_s
         holder.rootView.setBackgroundColor(
             ContextCompat.getColor(
                 context,

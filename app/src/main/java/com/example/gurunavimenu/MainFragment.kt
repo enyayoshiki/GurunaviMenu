@@ -5,7 +5,6 @@ import android.os.Bundle
 import androidx.fragment.app.Fragment
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
-import kotlinx.android.synthetic.main.activity_main.*
 import okhttp3.*
 import android.os.Handler
 import android.view.LayoutInflater
@@ -29,6 +28,14 @@ open class MainFragment : Fragment() {
         return inflater.inflate(R.layout.child_fragment, container, false)
     }
 
+    override fun onAttach(context: Context) {
+        super.onAttach(context)
+    }
+
+    override fun onDetach() {
+        super.onDetach()
+    }
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         initialize()
@@ -41,9 +48,13 @@ open class MainFragment : Fragment() {
     private fun initLayout() {
         updateData()
         initRecyclerView()
+        initSwipeRefreshLayout()
     }
 
-    private fun initRecyclerView(){
+    private fun initRecyclerView() {
+        activity?.also {
+            customAdapter = RecyclerViewAdapter(it)
+        }
         recyclerView.apply {
             adapter = customAdapter
             setHasFixedSize(true)
@@ -51,10 +62,16 @@ open class MainFragment : Fragment() {
         }
     }
 
+    private fun initSwipeRefreshLayout() {
+        swipeRefreshLayout.setOnRefreshListener {
+            updateData()
+        }
+    }
+
     private fun updateData() {
         val client = OkHttpClient()
         val request = Request.Builder()
-            .url("https://api.gnavi.co.jp/RestSearchAPI/v3/?keyid=527612dffd57ed324df900bcd18f3b65&offset_page=1")
+            .url("https://api.gnavi.co.jp/RestSearchAPI/v3/?keyid=10d7139a174395ebb2a656fad8ef098a&offset_page=1")
             .build()
         client.newCall(request).enqueue(object : Callback {
             override fun onFailure(call: Call, e: IOException) {
@@ -65,13 +82,19 @@ open class MainFragment : Fragment() {
             }
 
             override fun onResponse(call: Call, response: Response) {
+                var result: GurunaviResponse? = null
+                response.body?.string()?.also {
+                    val gson = Gson()
+//                        val type = object : TypeToken<List<GurunaviResponse>>() {}.type
+//                        val list = gson.fromJson<List<GurunaviResponse>>(it, type)
+                    result = gson.fromJson(it, GurunaviResponse::class.java)
+                }
                 handler.post {
                     swipeRefreshLayout.isRefreshing = false
-                    response.body?.string()?.also {
-                        val gson = Gson()
-                        val type = object : TypeToken<List<GurunaviResponse>>() {}.type
-                        val list = gson.fromJson<List<GurunaviResponse>>(it, type)
-                        customAdapter.refresh(list)
+                    result?.also {
+                        customAdapter.refresh(it.rest)
+                    } ?: run {
+                        customAdapter.refresh(listOf())
                     }
                 }
             }

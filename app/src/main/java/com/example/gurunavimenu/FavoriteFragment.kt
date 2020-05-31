@@ -1,6 +1,5 @@
 package com.example.gurunavimenu
 
-import android.content.Context
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -34,6 +33,9 @@ class FavoriteFragment: Fragment() {
     }
 
     private fun initRecyclerView(){
+        activity?.also {
+            customAdapter = RecyclerViewAdapter(it)
+        }
         recyclerView.apply {
             adapter = customAdapter
             setHasFixedSize(true)

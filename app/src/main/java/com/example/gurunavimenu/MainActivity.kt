@@ -1,6 +1,7 @@
 package com.example.gurunavimenu
 
 import android.app.Activity
+import android.content.Context
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
@@ -31,21 +32,14 @@ class MainActivity : AppCompatActivity() {
 
     private fun initLayout() {
         initClick()
-        initSwipeRefreshLayout()
         initTabLayout()
         initViewPager()
-        showProgress()
+//        showProgress()
     }
 
     private fun initClick() {
         closeImageView.setOnClickListener {
             finish()
-        }
-    }
-
-    private fun initSwipeRefreshLayout() {
-        swipeRefreshLayout.setOnRefreshListener {
-            initViewPager()
         }
     }
 
