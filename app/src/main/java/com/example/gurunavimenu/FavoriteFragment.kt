@@ -11,7 +11,7 @@ import kotlinx.android.synthetic.main.child_fragment.*
 
 class FavoriteFragment: Fragment() {
 
-    private lateinit var customAdapter:RecyclerViewAdapter
+    private val customAdapter by lazy { activity?.let { RecyclerViewAdapter(it) } }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,

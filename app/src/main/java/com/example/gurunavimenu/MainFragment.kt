@@ -1,10 +1,8 @@
 package com.example.gurunavimenu
 
-import android.content.Context
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import com.google.gson.Gson
-import com.google.gson.reflect.TypeToken
 import kotlinx.android.synthetic.main.activity_main.*
 import okhttp3.*
 import android.os.Handler
@@ -17,8 +15,7 @@ import java.io.IOException
 
 open class MainFragment : Fragment() {
 
-    private lateinit var customAdapter:RecyclerViewAdapter
-
+    private val customAdapter by lazy { activity?.let { RecyclerViewAdapter(it) } }
     private val handler = Handler()
 
 
@@ -41,9 +38,17 @@ open class MainFragment : Fragment() {
     private fun initLayout() {
         updateData()
         initRecyclerView()
+        initSwipeRefreshLayout()
     }
 
-    private fun initRecyclerView(){
+
+    private fun initSwipeRefreshLayout() {
+        swipeRefreshLayout.setOnRefreshListener {
+            updateData()
+        }
+    }
+
+    private fun initRecyclerView() {
         recyclerView.apply {
             adapter = customAdapter
             setHasFixedSize(true)
@@ -54,27 +59,34 @@ open class MainFragment : Fragment() {
     private fun updateData() {
         val client = OkHttpClient()
         val request = Request.Builder()
-            .url("https://api.gnavi.co.jp/RestSearchAPI/v3/?keyid=527612dffd57ed324df900bcd18f3b65&offset_page=1")
+            .url("https://api.gnavi.co.jp/RestSearchAPI/v3/?keyid=10d7139a174395ebb2a656fad8ef098a&offset_page=1")
             .build()
         client.newCall(request).enqueue(object : Callback {
             override fun onFailure(call: Call, e: IOException) {
                 handler.post {
                     swipeRefreshLayout.isRefreshing = false
-                    customAdapter.refresh(listOf())
+                    customAdapter?.refresh(listOf())
                 }
             }
 
             override fun onResponse(call: Call, response: Response) {
+                var result: GurunaviResponse? = null
+                response.body?.string()?.also {
+                    val gson = Gson()
+                    result = gson.fromJson(it, GurunaviResponse::class.java)
+                }
                 handler.post {
-                    swipeRefreshLayout.isRefreshing = false
-                    response.body?.string()?.also {
-                        val gson = Gson()
-                        val type = object : TypeToken<List<GurunaviResponse>>() {}.type
-                        val list = gson.fromJson<List<GurunaviResponse>>(it, type)
-                        customAdapter.refresh(list)
+                    result?.also {
+                        customAdapter?.refresh(it.rest)
+                    } ?: run {
+                        customAdapter?.refresh(listOf())
                     }
                 }
             }
+
+
         })
     }
 }
+
+

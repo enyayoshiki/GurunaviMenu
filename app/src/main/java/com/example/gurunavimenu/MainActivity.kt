@@ -11,6 +11,7 @@ import kotlinx.android.synthetic.main.activity_main.*
 
 
 class MainActivity : AppCompatActivity() {
+
     private var progressDialog: MaterialDialog? = null
 
     private val fragmentList = arrayListOf<Fragment>(
@@ -31,7 +32,6 @@ class MainActivity : AppCompatActivity() {
 
     private fun initLayout() {
         initClick()
-        initSwipeRefreshLayout()
         initTabLayout()
         initViewPager()
         showProgress()
@@ -43,11 +43,6 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    private fun initSwipeRefreshLayout() {
-        swipeRefreshLayout.setOnRefreshListener {
-            initViewPager()
-        }
-    }
 
     private fun initTabLayout() {
         tabLayout.setupWithViewPager(viewPager)
