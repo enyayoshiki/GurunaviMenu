@@ -7,14 +7,13 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import androidx.fragment.app.Fragment
 import com.afollestad.materialdialogs.MaterialDialog
+import io.realm.Realm
 import kotlinx.android.synthetic.main.activity_main.*
 
 
 class MainActivity : AppCompatActivity() {
 
-    private var progressDialog: MaterialDialog? = null
-
-    private val fragmentList = arrayListOf<Fragment>(
+    private val fragmentList = arrayListOf(
         MainFragment(),
         FavoriteFragment()
     )
@@ -34,7 +33,6 @@ class MainActivity : AppCompatActivity() {
         initClick()
         initTabLayout()
         initViewPager()
-        showProgress()
     }
 
     private fun initClick() {
@@ -53,23 +51,6 @@ class MainActivity : AppCompatActivity() {
         viewPager.adapter = adapter
     }
 
-
-    private fun showProgress() {
-        hideProgress()
-        var progressDialog = MaterialDialog(this).apply {
-            cancelable(false)
-            setContentView(
-                LayoutInflater.from(this@MainActivity)
-                    .inflate(R.layout.progress_dialog, null, false)
-            )
-            show()
-        }
-    }
-
-    private fun hideProgress() {
-        progressDialog?.dismiss()
-        progressDialog = null
-    }
 
     companion object {
         fun start(activity: Activity) =
