@@ -8,11 +8,13 @@ import com.google.gson.Gson
 import kotlinx.android.synthetic.main.activity_main.*
 import okhttp3.*
 import android.os.Handler
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import io.realm.Realm
 import io.realm.kotlin.createObject
 import io.realm.kotlin.where
@@ -22,6 +24,7 @@ import java.io.IOException
 
 open class MainFragment : Fragment() {
 
+    var loadPage = 1
     private lateinit var realm: Realm
     private lateinit var customAdapter: RecyclerViewAdapter
     private val handler = Handler()
@@ -47,25 +50,26 @@ open class MainFragment : Fragment() {
         updateData()
         initRecyclerView()
         initSwipeRefreshLayout()
-        //initClick()
+        initClick()
+        initScroll()
     }
 
-   /* private fun initClick() {
+    private fun initClick() {
         favoriteBtnFolse.setOnClickListener {
             realm?.executeTransaction {
                 val maxId = realm.where<com.example.gurunavimenu.Realm>().max("id")
                 val nextId = (maxId?.toLong() ?: 0L) + 1L
                 val favorite = realm.createObject<com.example.gurunavimenu.Realm>(nextId)
                 favorite?.apply {
-                    title= rTitle.toString()
-                    image = rImage.toString()
-                    category = rCategory.toString()
-                    area = rArea.toString()
+                    title= rTitle?.toString()
+                    image = rImage?.toString()
+                    category = rCategory?.toString()
+                    area = rArea?.toString()
                 }
             }
             Toast.makeText(context, "保存しました", Toast.LENGTH_SHORT).show()
         }
-    }*/
+    }
 
 
 
@@ -85,12 +89,13 @@ private fun initRecyclerView() {
         setHasFixedSize(true)
         layoutManager = LinearLayoutManager(context)
     }
+
 }
 
 private fun updateData() {
     val client = OkHttpClient()
     val request = Request.Builder()
-        .url("https://api.gnavi.co.jp/RestSearchAPI/v3/?keyid=10d7139a174395ebb2a656fad8ef098a&offset_page=1")
+        .url("https://api.gnavi.co.jp/RestSearchAPI/v3/?keyid=10d7139a174395ebb2a656fad8ef098a&offset_page=${loadPage}")
         .build()
     client.newCall(request).enqueue(object : Callback {
         override fun onFailure(call: Call, e: IOException) {
@@ -114,15 +119,25 @@ private fun updateData() {
                 }
             }
         }
-
-
     })
 }
-
-    override fun onDestroy() {
-        super.onDestroy()
-        realm.close()
+    private fun initScroll() {
+        recyclerView.addOnScrollListener(object : NextScrollListener(LinearLayoutManager(context)) {
+            override fun onLoadMore(currentPage: Int) {
+                Log.v("OnLoadMore", "page: $currentPage")
+                loadPage++
+                updateData()
+            }
+        })
     }
-}
+
+
+        override fun onDestroy() {
+            super.onDestroy()
+            realm.close()
+        }
+    }
+
+
 
 

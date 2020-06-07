@@ -65,4 +65,7 @@ class RecyclerViewAdapter(private val context: Context) :
         val rCategory: TextView = view.findViewById(R.id.rCategory)
         val rArea: TextView = view.findViewById(R.id.rArea)
     }
+
+
+
 }
