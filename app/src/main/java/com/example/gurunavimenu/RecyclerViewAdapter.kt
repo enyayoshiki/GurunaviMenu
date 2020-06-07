@@ -25,6 +25,11 @@ class RecyclerViewAdapter(private val context: Context) :
         notifyDataSetChanged()
     }
 
+    fun add(list: List<Rest>) {
+        items.addAll(list)
+        notifyDataSetChanged()
+    }
+
     override fun getItemCount(): Int = items.size
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder =

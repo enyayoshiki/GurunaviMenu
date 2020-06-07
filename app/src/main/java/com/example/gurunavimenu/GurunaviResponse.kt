@@ -1,52 +1,14 @@
 package com.example.gurunavimenu
 
 data class GurunaviResponse(
-    val hit_per_page: Int,
-    val page_offset: Int,
-    val rest: List<Rest>,
-    val total_hit_count: Int
+    val rest: List<Rest>
 )
 
 data class Rest(
-    val access: Access,
-    val address: String,
-    val budget: Int,
     val category: String,
     val code: Code,
-    val coupon_url: CouponUrl,
-    val credit_card: String,
-    val e_money: String,
-    val fax: String,
-    val flags: Flags,
-    val holiday: String,
-    val id: String,
     val image_url: ImageUrl,
-    val latitude: String,
-    val longitude: String,
-    val lunch: Any,
-    val name: String,
-    val name_kana: String,
-    val opentime: String,
-    val parking_lots: String,
-    val party: Int,
-    val pr: Pr,
-    val tel: String,
-    val tel_sub: String,
-    val update_date: String,
-    val url: String,
-    val url_mobile: String
-)
-
-data class AttributesX(
-    val order: Int
-)
-
-data class Access(
-    val line: String,
-    val note: String,
-    val station: String,
-    val station_exit: String,
-    val walk: String
+    val name: String
 )
 
 data class Code(
@@ -62,24 +24,8 @@ data class Code(
     val prefname: String
 )
 
-data class CouponUrl(
-    val mobile: String,
-    val pc: String
-)
-
-data class Flags(
-    val mobile_coupon: Int,
-    val mobile_site: Int,
-    val pc_coupon: Int
-)
-
 data class ImageUrl(
     val qrcode: String,
     val shop_image1: String,
     val shop_image2: String
-)
-
-data class Pr(
-    val pr_long: String,
-    val pr_short: String
 )

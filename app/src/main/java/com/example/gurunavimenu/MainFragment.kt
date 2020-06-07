@@ -19,7 +19,6 @@ import io.realm.Realm
 import io.realm.kotlin.createObject
 import io.realm.kotlin.where
 import kotlinx.android.synthetic.main.child_fragment.*
-import kotlinx.android.synthetic.main.one_result.*
 import java.io.IOException
 
 open class MainFragment : Fragment() {
@@ -28,6 +27,12 @@ open class MainFragment : Fragment() {
     private lateinit var realm: Realm
     private lateinit var customAdapter: RecyclerViewAdapter
     private val handler = Handler()
+
+    private val scrollListener = object : NextScrollListener() {
+        override fun onLoadMore() {
+            updateData(true)
+        }
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -51,24 +56,23 @@ open class MainFragment : Fragment() {
         initRecyclerView()
         initSwipeRefreshLayout()
         initClick()
-        initScroll()
     }
 
     private fun initClick() {
-        favoriteBtnFolse.setOnClickListener {
-            realm?.executeTransaction {
-                val maxId = realm.where<com.example.gurunavimenu.Realm>().max("id")
-                val nextId = (maxId?.toLong() ?: 0L) + 1L
-                val favorite = realm.createObject<com.example.gurunavimenu.Realm>(nextId)
-                favorite?.apply {
-                    title = rTitle?.toString()
-                    image = rImage?.toString()
-                    category = rCategory?.toString()
-                    area = rArea?.toString()
-                }
-            }
-            Toast.makeText(context, "保存しました", Toast.LENGTH_SHORT).show()
-        }
+//        favoriteBtnFolse.setOnClickListener {
+//            realm?.executeTransaction {
+//                val maxId = realm.where<com.example.gurunavimenu.Realm>().max("id")
+//                val nextId = (maxId?.toLong() ?: 0L) + 1L
+//                val favorite = realm.createObject<com.example.gurunavimenu.Realm>(nextId)
+//                favorite?.apply {
+//                    title = rTitle?.toString()
+//                    image = rImage?.toString()
+//                    category = rCategory?.toString()
+//                    area = rArea?.toString()
+//                }
+//            }
+//            Toast.makeText(context, "保存しました", Toast.LENGTH_SHORT).show()
+//        }
     }
 
 
@@ -82,16 +86,22 @@ open class MainFragment : Fragment() {
         activity?.also {
             customAdapter = RecyclerViewAdapter(it)
         }
-
+        val linearLayoutManager = LinearLayoutManager(context)
         recyclerView.apply {
             adapter = customAdapter
             setHasFixedSize(true)
-            layoutManager = LinearLayoutManager(context)
+            layoutManager = linearLayoutManager
+            addOnScrollListener(scrollListener)
         }
-
     }
 
-    private fun updateData() {
+    private fun updateData(isAdd: Boolean = false) {
+        if (isAdd) {
+            loadPage ++
+        } else {
+            loadPage = 1
+        }
+        println("updateData loadPage:$loadPage")
         val client = OkHttpClient()
         val request = Request.Builder()
             .url("https://api.gnavi.co.jp/RestSearchAPI/v3/?keyid=10d7139a174395ebb2a656fad8ef098a&offset_page=${loadPage}")
@@ -101,6 +111,7 @@ open class MainFragment : Fragment() {
                 handler.post {
                     swipeRefreshLayout.isRefreshing = false
                     customAdapter?.refresh(listOf())
+                    scrollListener.isLoading = false
                 }
             }
 
@@ -111,25 +122,20 @@ open class MainFragment : Fragment() {
                     result = gson.fromJson(it, GurunaviResponse::class.java)
                 }
                 handler.post {
+                    swipeRefreshLayout.isRefreshing = false
                     result?.also {
-                        customAdapter?.refresh(it.rest)
+                        if (isAdd)
+                            customAdapter?.add(it.rest)
+                        else
+                            customAdapter?.refresh(it.rest)
                     } ?: run {
                         customAdapter?.refresh(listOf())
                     }
+                    scrollListener.isLoading = false
                 }
             }
         })
     }
-
-    private fun initScroll() {
-        recyclerView.addOnScrollListener(object : NextScrollListener(LinearLayoutManager(context)) {
-            override fun onLoadMore() {
-                loadPage++
-                updateData()
-            }
-        })
-    }
-
 
     override fun onDestroy() {
         super.onDestroy()
