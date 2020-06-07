@@ -61,7 +61,7 @@ open class MainFragment : Fragment() {
                 val nextId = (maxId?.toLong() ?: 0L) + 1L
                 val favorite = realm.createObject<com.example.gurunavimenu.Realm>(nextId)
                 favorite?.apply {
-                    title= rTitle?.toString()
+                    title = rTitle?.toString()
                     image = rImage?.toString()
                     category = rCategory?.toString()
                     area = rArea?.toString()
@@ -72,59 +72,58 @@ open class MainFragment : Fragment() {
     }
 
 
-
-private fun initSwipeRefreshLayout() {
-    swipeRefreshLayout.setOnRefreshListener {
-        updateData()
-    }
-}
-
-private fun initRecyclerView() {
-    activity?.also {
-        customAdapter = RecyclerViewAdapter(it)
+    private fun initSwipeRefreshLayout() {
+        swipeRefreshLayout.setOnRefreshListener {
+            updateData()
+        }
     }
 
-    recyclerView.apply {
-        adapter = customAdapter
-        setHasFixedSize(true)
-        layoutManager = LinearLayoutManager(context)
-    }
-
-}
-
-private fun updateData() {
-    val client = OkHttpClient()
-    val request = Request.Builder()
-        .url("https://api.gnavi.co.jp/RestSearchAPI/v3/?keyid=10d7139a174395ebb2a656fad8ef098a&offset_page=${loadPage}")
-        .build()
-    client.newCall(request).enqueue(object : Callback {
-        override fun onFailure(call: Call, e: IOException) {
-            handler.post {
-                swipeRefreshLayout.isRefreshing = false
-                customAdapter?.refresh(listOf())
-            }
+    private fun initRecyclerView() {
+        activity?.also {
+            customAdapter = RecyclerViewAdapter(it)
         }
 
-        override fun onResponse(call: Call, response: Response) {
-            var result: GurunaviResponse? = null
-            response.body?.string()?.also {
-                val gson = Gson()
-                result = gson.fromJson(it, GurunaviResponse::class.java)
-            }
-            handler.post {
-                result?.also {
-                    customAdapter?.refresh(it.rest)
-                } ?: run {
+        recyclerView.apply {
+            adapter = customAdapter
+            setHasFixedSize(true)
+            layoutManager = LinearLayoutManager(context)
+        }
+
+    }
+
+    private fun updateData() {
+        val client = OkHttpClient()
+        val request = Request.Builder()
+            .url("https://api.gnavi.co.jp/RestSearchAPI/v3/?keyid=10d7139a174395ebb2a656fad8ef098a&offset_page=${loadPage}")
+            .build()
+        client.newCall(request).enqueue(object : Callback {
+            override fun onFailure(call: Call, e: IOException) {
+                handler.post {
+                    swipeRefreshLayout.isRefreshing = false
                     customAdapter?.refresh(listOf())
                 }
             }
-        }
-    })
-}
+
+            override fun onResponse(call: Call, response: Response) {
+                var result: GurunaviResponse? = null
+                response.body?.string()?.also {
+                    val gson = Gson()
+                    result = gson.fromJson(it, GurunaviResponse::class.java)
+                }
+                handler.post {
+                    result?.also {
+                        customAdapter?.refresh(it.rest)
+                    } ?: run {
+                        customAdapter?.refresh(listOf())
+                    }
+                }
+            }
+        })
+    }
+
     private fun initScroll() {
         recyclerView.addOnScrollListener(object : NextScrollListener(LinearLayoutManager(context)) {
-            override fun onLoadMore(currentPage: Int) {
-                Log.v("OnLoadMore", "page: $currentPage")
+            override fun onLoadMore() {
                 loadPage++
                 updateData()
             }
@@ -132,11 +131,12 @@ private fun updateData() {
     }
 
 
-        override fun onDestroy() {
-            super.onDestroy()
-            realm.close()
-        }
+    override fun onDestroy() {
+        super.onDestroy()
+        realm.close()
     }
+}
+
 
 
 
