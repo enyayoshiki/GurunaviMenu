@@ -25,7 +25,6 @@ import java.io.IOException
 open class MainFragment : Fragment() {
 
     var loadPage = 1
-    private lateinit var realm: Realm
     private lateinit var customAdapter: RecyclerViewAdapter
     private val handler = Handler()
 
@@ -34,11 +33,12 @@ open class MainFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         return inflater.inflate(R.layout.child_fragment, container, false)
+
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        realm = Realm.getDefaultInstance()
+
         initialize()
     }
 
@@ -50,25 +50,7 @@ open class MainFragment : Fragment() {
         updateData()
         initRecyclerView()
         initSwipeRefreshLayout()
-        initClick()
         initScroll()
-    }
-
-    private fun initClick() {
-        favoriteBtnFolse.setOnClickListener {
-            realm?.executeTransaction {
-                val maxId = realm.where<com.example.gurunavimenu.Realm>().max("id")
-                val nextId = (maxId?.toLong() ?: 0L) + 1L
-                val favorite = realm.createObject<com.example.gurunavimenu.Realm>(nextId)
-                favorite?.apply {
-                    title = rTitle?.toString()
-                    image = rImage?.toString()
-                    category = rCategory?.toString()
-                    area = rArea?.toString()
-                }
-            }
-            Toast.makeText(context, "保存しました", Toast.LENGTH_SHORT).show()
-        }
     }
 
 
@@ -100,7 +82,7 @@ open class MainFragment : Fragment() {
             override fun onFailure(call: Call, e: IOException) {
                 handler.post {
                     swipeRefreshLayout.isRefreshing = false
-                    customAdapter?.refresh(listOf())
+                    customAdapter.refresh(listOf())
                 }
             }
 
@@ -112,9 +94,9 @@ open class MainFragment : Fragment() {
                 }
                 handler.post {
                     result?.also {
-                        customAdapter?.refresh(it.rest)
+                        customAdapter.refresh(it.rest)
                     } ?: run {
-                        customAdapter?.refresh(listOf())
+                        customAdapter.refresh(listOf())
                     }
                 }
             }
@@ -125,16 +107,14 @@ open class MainFragment : Fragment() {
         recyclerView.addOnScrollListener(object : NextScrollListener(LinearLayoutManager(context)) {
             override fun onLoadMore() {
                 loadPage++
-                updateData()
+//                updateData()
             }
         })
     }
 
 
-    override fun onDestroy() {
-        super.onDestroy()
-        realm.close()
-    }
+
+
 }
 
 

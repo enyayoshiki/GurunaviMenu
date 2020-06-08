@@ -1,5 +1,6 @@
 package com.example.gurunavimenu
 
+import android.content.Context
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -7,6 +8,7 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import io.realm.Realm
+import io.realm.RealmResults
 import io.realm.Sort
 import kotlinx.android.synthetic.main.child_fragment.*
 
@@ -37,13 +39,14 @@ class FavoriteFragment: Fragment() {
     }
 
     private fun initRecyclerView() {
-
         val realmResults = realm.where(com.example.gurunavimenu.Realm::class.java)
             .findAll()
             .sort("id", Sort.DESCENDING)
-
-        recyclerView.apply {
+        activity.also {
             customAdapter = RealmRecyclerViewAdapter(realmResults)
+        }
+        recyclerView.apply {
+            adapter = customAdapter
             setHasFixedSize(true)
             layoutManager = LinearLayoutManager(context)
         }

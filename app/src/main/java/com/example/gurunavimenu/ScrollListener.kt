@@ -19,6 +19,7 @@ abstract class NextScrollListener(private val layoutManager: LinearLayoutManager
         totalItemCount = layoutManager.itemCount
         firstVisibleItem = layoutManager.findFirstVisibleItemPosition()
 
+
         if (firstVisibleItem + visibleItemCount >= totalItemCount) {
             onLoadMore()
         }

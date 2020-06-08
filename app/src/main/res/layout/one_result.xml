@@ -16,13 +16,12 @@
 
         <ImageView
             android:id="@+id/rImage"
-            android:layout_width="130dp"
-            android:layout_height="130dp"
-            android:layout_margin="20dp"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
+            android:layout_width="71dp"
+            android:layout_height="76dp"
+            android:scaleType="fitXY"
             app:layout_constraintBottom_toBottomOf="@id/rootView"
-            />
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
         <TextView
             android:id="@+id/rTitle"
             android:layout_width="wrap_content"
@@ -46,7 +45,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="20dp"
-            app:layout_constraintEnd_toStartOf="@id/rTitle"
+            app:layout_constraintStart_toStartOf="@id/rTitle"
             app:layout_constraintTop_toBottomOf="@id/rCategory"
             />
 
