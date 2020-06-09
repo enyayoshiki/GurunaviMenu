@@ -87,6 +87,7 @@ open class MainFragment : Fragment() {
             }
 
             override fun onResponse(call: Call, response: Response) {
+                var items = mutableListOf<Rest>()
                 var result: GurunaviResponse? = null
                 response.body?.string()?.also {
                     val gson = Gson()
@@ -94,7 +95,13 @@ open class MainFragment : Fragment() {
                 }
                 handler.post {
                     result?.also {
-                        customAdapter.refresh(it.rest)
+                        if (loadPage == 1) {
+                            customAdapter.refresh(it.rest)
+                            items.addAll(it.rest)
+                        } else{
+                            items.addAll(it.rest)
+                            customAdapter.refresh(items)
+                        }
                     } ?: run {
                         customAdapter.refresh(listOf())
                     }
@@ -104,15 +111,14 @@ open class MainFragment : Fragment() {
     }
 
     private fun initScroll() {
-        recyclerView.addOnScrollListener(object : NextScrollListener(LinearLayoutManager(context)) {
+        recyclerView.addOnScrollListener(object :
+            NextScrollListener(LinearLayoutManager(context)) {
             override fun onLoadMore() {
                 loadPage++
-//                updateData()
+                updateData()
             }
         })
     }
-
-
 
 
 }

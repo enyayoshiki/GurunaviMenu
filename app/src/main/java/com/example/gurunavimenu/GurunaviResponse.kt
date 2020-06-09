@@ -29,8 +29,3 @@ data class ImageUrl(
     val shop_image1: String,
     val shop_image2: String
 )
-
-data class Pr(
-    val pr_long: String,
-    val pr_short: String
-)

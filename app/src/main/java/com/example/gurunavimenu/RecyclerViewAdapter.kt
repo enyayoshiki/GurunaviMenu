@@ -24,9 +24,12 @@ class RecyclerViewAdapter(private val context: Context) :
 
     fun refresh(list: List<Rest>) {
         items.apply {
-            clear()
-            addAll(list)
-        }
+            if(items.size > 10){
+                addAll(list)
+            }else
+                clear()
+                addAll(list)
+            }
         notifyDataSetChanged()
     }
 
@@ -63,7 +66,7 @@ class RecyclerViewAdapter(private val context: Context) :
         holder.rootView.setOnClickListener {
             Toast.makeText(context, data.name, Toast.LENGTH_SHORT).show()
         }
-        holder.BtnF.setOnClickListener {
+        holder.favoriteBtnFolse.setOnClickListener {
             realm.executeTransaction {
                 val maxId = realm.where<com.example.gurunavimenu.Realm>().max("id")
                 val nextId = (maxId?.toLong() ?: 0L) + 1L
@@ -90,7 +93,7 @@ class ItemViewHolder(view: ViewGroup) : RecyclerView.ViewHolder(view) {
     val rTitle: TextView = view.findViewById(R.id.rTitle)
     val rCategory: TextView = view.findViewById(R.id.rCategory)
     val rArea: TextView = view.findViewById(R.id.rArea)
-    val BtnF: Button = view.findViewById(R.id.favoriteBtnFolse)
+    val favoriteBtnFolse: Button = view.findViewById(R.id.favoriteBtnFolse)
 }
 
 

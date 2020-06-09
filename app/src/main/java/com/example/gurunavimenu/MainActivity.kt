@@ -44,21 +44,6 @@ class MainActivity : AppCompatActivity() {
         closeImageView.setOnClickListener {
             finish()
         }
-    /*    favoriteBtnFolse.setOnClickListener{
-            realm.executeTransaction {
-                val maxId = realm.where<com.example.gurunavimenu.Realm>().max("id")
-                val nextId = (maxId?.toLong() ?: 0L) + 1L
-                val gurunavirealm = realm.createObject<com.example.gurunavimenu.Realm>(nextId)
-                gurunavirealm.apply {
-                    title= rTitle.text.toString()
-                    image = rImage.toString()
-                    category = rCategory.text.toString()
-                    area = rArea.text.toString()
-                }
-            }
-            Toast.makeText(applicationContext, "保存しました", Toast.LENGTH_SHORT).show()
-        }*/
-
     }
 
 
