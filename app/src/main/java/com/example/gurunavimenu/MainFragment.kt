@@ -69,9 +69,10 @@ open class MainFragment : Fragment() {
             adapter = customAdapter
             setHasFixedSize(true)
             layoutManager = LinearLayoutManager(context)
-        }
 
-    }
+
+            }
+        }
 
     private fun updateData() {
         val client = OkHttpClient()

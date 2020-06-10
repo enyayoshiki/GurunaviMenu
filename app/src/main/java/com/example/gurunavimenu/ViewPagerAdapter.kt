@@ -9,7 +9,10 @@ import androidx.fragment.app.FragmentStatePagerAdapter
 class ViewPagerAdapter(fm: FragmentManager, private val fragmentList: List<Fragment>) :
     FragmentStatePagerAdapter(fm, BEHAVIOR_RESUME_ONLY_CURRENT_FRAGMENT) {
     override fun getItem(position: Int): Fragment {
-        return fragmentList[position]
+        return when (position) {
+            0 -> fragmentList[position]
+            else -> FavoriteFragment.newInstance(position)
+        }
     }
 
     override fun getCount(): Int {

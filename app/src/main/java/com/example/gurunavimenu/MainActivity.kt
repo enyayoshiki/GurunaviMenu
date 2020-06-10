@@ -7,15 +7,19 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.widget.Toast
 import androidx.fragment.app.Fragment
+import androidx.recyclerview.widget.LinearLayoutManager
 import com.afollestad.materialdialogs.MaterialDialog
 import io.realm.Realm
+import io.realm.Sort
 import io.realm.kotlin.createObject
 import io.realm.kotlin.where
 import kotlinx.android.synthetic.main.activity_main.*
+import kotlinx.android.synthetic.main.child_fragment.*
 import kotlinx.android.synthetic.main.one_result.*
 
 
 class MainActivity : AppCompatActivity() {
+
 
     private val fragmentList = arrayListOf(
         MainFragment(),
@@ -55,8 +59,6 @@ class MainActivity : AppCompatActivity() {
         var adapter = ViewPagerAdapter(supportFragmentManager, fragmentList)
         viewPager.adapter = adapter
     }
-
-
 
     companion object {
         fun start(activity: Activity) =

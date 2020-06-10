@@ -18,9 +18,7 @@ class RecyclerViewAdapter(private val context: Context) :
     RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
     private val items = mutableListOf<Rest>()
-    private val realm: Realm by lazy {
-        Realm.getDefaultInstance()
-    }
+    private lateinit var realm: Realm
 
     fun refresh(list: List<Rest>) {
         items.apply {
@@ -51,7 +49,7 @@ class RecyclerViewAdapter(private val context: Context) :
     }
 
     private fun onBindViewHolder(holder: ItemViewHolder, position: Int) {
-
+        realm = Realm.getDefaultInstance()
         val data = items[position]
         Picasso.get().load(data.image_url.qrcode).into(holder.rImage)
         holder.rTitle.text = data.name
@@ -79,11 +77,8 @@ class RecyclerViewAdapter(private val context: Context) :
                 }
             }
             Toast.makeText(context, "保存しました", Toast.LENGTH_SHORT).show()
-
-
         }
     }
-
 }
 
 
@@ -94,6 +89,7 @@ class ItemViewHolder(view: ViewGroup) : RecyclerView.ViewHolder(view) {
     val rCategory: TextView = view.findViewById(R.id.rCategory)
     val rArea: TextView = view.findViewById(R.id.rArea)
     val favoriteBtnFolse: Button = view.findViewById(R.id.favoriteBtnFolse)
+    val moreBtn: Button = view.findViewById(R.id.moreBtn)
 }
 
 
