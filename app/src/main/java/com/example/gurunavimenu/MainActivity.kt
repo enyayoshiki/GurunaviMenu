@@ -4,18 +4,8 @@ import android.app.Activity
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.view.LayoutInflater
-import android.widget.Toast
-import androidx.fragment.app.Fragment
-import androidx.recyclerview.widget.LinearLayoutManager
-import com.afollestad.materialdialogs.MaterialDialog
-import io.realm.Realm
-import io.realm.Sort
-import io.realm.kotlin.createObject
-import io.realm.kotlin.where
 import kotlinx.android.synthetic.main.activity_main.*
-import kotlinx.android.synthetic.main.child_fragment.*
-import kotlinx.android.synthetic.main.one_result.*
+
 
 
 class MainActivity : AppCompatActivity() {
@@ -60,8 +50,4 @@ class MainActivity : AppCompatActivity() {
         viewPager.adapter = adapter
     }
 
-    companion object {
-        fun start(activity: Activity) =
-            activity.startActivity(Intent(activity, MainActivity::class.java))
-    }
 }

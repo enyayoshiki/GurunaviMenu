@@ -1,11 +1,12 @@
 package com.example.gurunavimenu
 
+
 import android.content.Context
 import android.view.LayoutInflater
 import android.view.ViewGroup
-import android.widget.Toast
-import androidx.core.content.ContextCompat
+import androidx.core.content.ContextCompat.getColor
 import androidx.recyclerview.widget.RecyclerView
+import com.google.android.material.color.MaterialColors.getColor
 import com.squareup.picasso.Picasso
 import io.realm.RealmResults
 
@@ -39,15 +40,15 @@ class RealmRecyclerViewAdapter (realmResults:RealmResults<Realm>): RecyclerView.
             rTitle.text = data?.title
             rCategory.text = data?.category
             rArea.text = data?.area
-            /*rootView.setBackgroundColor(
-                ContextCompat.getColor(
-                    ,
-                    if (position % 2 == 0) R.color.colorPrimaryDark else R.color.colorAccent
-                )
-            )
-            rootView.setOnClickListener {
-                Toast.makeText(, "${data?.title}", Toast.LENGTH_SHORT).show()
-            }*/
+//            rootView.setBackgroundColor(
+//                Context.getColor(
+//                    context,
+//                    if (position % 2 == 0) R.color.colorPrimaryDark else R.color.colorAccent
+//                )
+//            )
+//            rootView.setOnClickListener {
+//                Toast.makeText(, "${data?.title}", Toast.LENGTH_SHORT).show()
+//            }
         }
     }
 

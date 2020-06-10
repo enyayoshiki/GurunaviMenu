@@ -59,7 +59,7 @@
             app:layout_constraintBottom_toBottomOf="@id/rootView"
             app:layout_constraintEnd_toEndOf="@id/rootView"
             app:layout_constraintTop_toTopOf="@id/rootView"
-            app:layout_constraintVertical_bias="1.0" />
+            app:layout_constraintVertical_bias="0.504" />
 
         <Button
             android:id="@+id/favoriteBtnTrue"
@@ -71,15 +71,7 @@
             app:layout_constraintBottom_toBottomOf="@id/rootView"
             app:layout_constraintEnd_toEndOf="@id/rootView"
             app:layout_constraintTop_toTopOf="@id/rootView"
-            app:layout_constraintVertical_bias="1.0" />
-        <Button
-            android:id="@+id/moreBtn"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
-
-
+            app:layout_constraintVertical_bias="0.504" />
 
         <View
             android:id="@+id/lineView"
@@ -87,6 +79,7 @@
             android:layout_height="1dp"
             android:background="@color/design_default_color_error"
             app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.0"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/rootView" />
 
