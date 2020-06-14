@@ -5,6 +5,7 @@ data class GurunaviResponse(
 )
 
 data class Rest(
+    val id: String,
     val category: String,
     val code: Code,
     val image_url: ImageUrl,

@@ -16,7 +16,7 @@ class RealmRecyclerViewAdapter (realmResults:RealmResults<Realm>): RecyclerView.
     private val item: RealmResults<Realm> = realmResults
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder =
-        ItemViewHolder(
+       ItemViewHolder(
             LayoutInflater.from(parent.context).inflate(
                 R.layout.one_result,
                 parent,

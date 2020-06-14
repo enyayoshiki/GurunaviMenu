@@ -1,21 +1,17 @@
 package com.example.gurunavimenu
 
-import android.provider.ContactsContract
 import io.realm.RealmObject
 import io.realm.annotations.PrimaryKey
+import io.realm.annotations.Required
 
 
 open class Realm : RealmObject(){
     @PrimaryKey
-    var id: Long? = 0
+    @Required
+    var id: Long? = 0L
     var title : String? = ""
     var image: String? = ""
     var category :String? = ""
     var area : String? = ""
-}
-
-open class OnOffRealm : RealmObject(){
-    @PrimaryKey
-    var id : Long? = 0
-    var onOff : Boolean = true
+    var primalId:String? =""
 }

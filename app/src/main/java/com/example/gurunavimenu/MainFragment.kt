@@ -10,18 +10,12 @@ import android.os.Handler
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.constraintlayout.solver.widgets.ConstraintWidget
-import androidx.constraintlayout.solver.widgets.ConstraintWidget.INVISIBLE
-import androidx.constraintlayout.solver.widgets.ConstraintWidget.VISIBLE
 import androidx.recyclerview.widget.LinearLayoutManager
 import io.realm.Realm
-import io.realm.Sort
-import io.realm.kotlin.createObject
 import kotlinx.android.synthetic.main.child_fragment.*
-import kotlinx.android.synthetic.main.one_result.view.*
 import java.io.IOException
 
-open class MainFragment : Fragment() {
+open class MainFragment : Fragment(){
 
     var loadPage = 1
     private lateinit var customAdapter: RecyclerViewAdapter
@@ -63,11 +57,7 @@ open class MainFragment : Fragment() {
 
     @SuppressLint("WrongConstant")
     private fun initRecyclerView() {
-//        val realmResults = realm.where(OnOffRealm::class.java)
-//            .findAll()
-//            .sort("id", Sort.DESCENDING)
-//        val OnOffRealm = realm.createObject<OnOffRealm>(id)
-
+       // val realmResults = realm.where(com.example.gurunavimenu.Realm::class.java).findAll()
         activity?.also {
             customAdapter = RecyclerViewAdapter(it)
         }
@@ -75,6 +65,7 @@ open class MainFragment : Fragment() {
             adapter = customAdapter
             setHasFixedSize(true)
             layoutManager = LinearLayoutManager(context)
+
 //            if(OnOffRealm.onOff){
 //                favoriteBtnFolse.visibility = VISIBLE
 //                favoriteBtnTrue.visibility = INVISIBLE
@@ -105,6 +96,7 @@ private fun updateData() {
             response.body?.string()?.also {
                 val gson = Gson()
                 result = gson.fromJson(it, GurunaviResponse::class.java)
+
             }
             handler.post {
                 result?.also {
@@ -121,6 +113,8 @@ private fun updateData() {
             }
         }
     })
+
+
 }
 
 //    private fun initScroll() {
@@ -133,7 +127,10 @@ private fun updateData() {
 //        })
 //    }
 
-
+    override fun onDestroy() {
+        super.onDestroy()
+        realm.close()
+    }
 }
 
 
