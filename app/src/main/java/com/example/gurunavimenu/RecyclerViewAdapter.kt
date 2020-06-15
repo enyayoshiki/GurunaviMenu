@@ -6,10 +6,8 @@ import android.content.Context
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import android.widget.*
-import androidx.constraintlayout.solver.widgets.ConstraintWidget.VISIBLE
-import androidx.constraintlayout.widget.ConstraintLayout
-import androidx.constraintlayout.widget.ConstraintSet.INVISIBLE
 import androidx.recyclerview.widget.RecyclerView
+import com.example.gurunavimenu.extention.Visible
 import com.squareup.picasso.Picasso
 import io.realm.Realm
 import io.realm.kotlin.createObject
@@ -57,58 +55,54 @@ class RecyclerViewAdapter(private val context: Context) :
 
         val data = items[position]
         Picasso.get().load(data.image_url.qrcode).into(holder.rImage)
-        holder.rTitle.text = data.name
-        holder.rCategory.text = data.category
-        holder.rArea.text = data.code.areaname_s
-        val realmResults =
-            realm.where(com.example.gurunavimenu.Realm::class.java).equalTo("primalId", data.id)
-                .findAll()
-//        val ResultArray: String = realmResults.toTypedArray().toString()
-        when (realmResults.size.toString()) {
-            "1" ->
-                holder.apply {
-                    favoriteBtnFolse.visibility = INVISIBLE
-                    favoriteBtnTrue.visibility = VISIBLE
+        holder.apply {
+            rTitle.text = data.name
+            rCategory.text = data.category
+            rArea.text = data.code.areaname_s
+            favoriteBtnFolse.setOnClickListener {
+                realm.executeTransaction {
+                    val gurunavirealm =
+                        realm.createObject<com.example.gurunavimenu.FavoriteStore>(position)
+                    gurunavirealm.apply {
+                        title = data.name
+                        image = data.image_url.qrcode
+                        category = data.category
+                        area = data.code.areaname
+                        id = data.id
+                    }
                 }
-            else ->
-                holder.apply {
-                    favoriteBtnFolse.visibility = VISIBLE
-                    favoriteBtnTrue.visibility = INVISIBLE
+                it.Visible(false)
+                favoriteBtnTrue.Visible(true)
+                Toast.makeText(context, "保存しました", Toast.LENGTH_SHORT).show()
+            }
+            favoriteBtnTrue.setOnClickListener {
+                realm.executeTransaction {
+                    val deleteRealm = realm.where<com.example.gurunavimenu.FavoriteStore>()
+                        .equalTo("title", "${holder.rTitle.text}")
+                        ?.findFirst()
+                        ?.deleteFromRealm()
                 }
-        }
+                it.Visible(false)
+                favoriteBtnFolse.Visible(true)
+                Toast.makeText(context, "お気に入りを解除しました", Toast.LENGTH_SHORT).show()
+            }
 
-        holder.favoriteBtnFolse.setOnClickListener {
-            realm.executeTransaction {
-                val gurunavirealm = realm.createObject<com.example.gurunavimenu.Realm>(position)
-                gurunavirealm.apply {
-                    title = data.name
-                    image = data.image_url.qrcode
-                    category = data.category
-                    area = data.code.areaname
-                    primalId = data.id
-                }
+            val realmResults = FavoriteStore.findBy(data.id)
+            holder.apply {
+                favoriteBtnFolse.Visible(realmResults == null)
+                favoriteBtnTrue.Visible(realmResults !== null)
             }
-            it.visibility = INVISIBLE
-            holder.favoriteBtnTrue.visibility = VISIBLE
-            Toast.makeText(context, "保存しました", Toast.LENGTH_SHORT).show()
         }
-        holder.favoriteBtnTrue.setOnClickListener {
-            realm.executeTransaction {
-                val deleteRealm = realm.where<com.example.gurunavimenu.Realm>()
-                    .equalTo("title", "${holder.rTitle.text}")
-                    ?.findFirst()
-                    ?.deleteFromRealm()
-            }
-            it.visibility = INVISIBLE
-            holder.favoriteBtnFolse.visibility = VISIBLE
-            Toast.makeText(context, "お気に入りを解除しました", Toast.LENGTH_SHORT).show()
-        }
+    }
+
+    override fun onDetachedFromRecyclerView(recyclerView: RecyclerView) {
+        super.onDetachedFromRecyclerView(recyclerView)
+        realm.close()
     }
 }
 
 
 class ItemViewHolder(view: ViewGroup) : RecyclerView.ViewHolder(view) {
-    val rootView: ConstraintLayout = view.findViewById(R.id.rootView)
     val rImage: ImageView = view.findViewById(R.id.rImage)
     val rTitle: TextView = view.findViewById(R.id.rTitle)
     val rCategory: TextView = view.findViewById(R.id.rCategory)

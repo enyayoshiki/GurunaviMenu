@@ -8,12 +8,13 @@ import androidx.core.content.ContextCompat.getColor
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.color.MaterialColors.getColor
 import com.squareup.picasso.Picasso
+import io.realm.RealmList
 import io.realm.RealmResults
 
 
-class RealmRecyclerViewAdapter (realmResults:RealmResults<Realm>): RecyclerView.Adapter<RecyclerView.ViewHolder>() {
+class RealmRecyclerViewAdapter (realmResults:List<FavoriteStore>): RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
-    private val item: RealmResults<Realm> = realmResults
+    private val item = FavoriteStore.findAll()
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder =
        ItemViewHolder(

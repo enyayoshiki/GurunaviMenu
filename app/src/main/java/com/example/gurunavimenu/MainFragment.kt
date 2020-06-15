@@ -1,7 +1,6 @@
 package com.example.gurunavimenu
 
 
-import android.annotation.SuppressLint
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import com.google.gson.Gson
@@ -55,9 +54,8 @@ open class MainFragment : Fragment(){
         }
     }
 
-    @SuppressLint("WrongConstant")
+
     private fun initRecyclerView() {
-       // val realmResults = realm.where(com.example.gurunavimenu.Realm::class.java).findAll()
         activity?.also {
             customAdapter = RecyclerViewAdapter(it)
         }
@@ -66,13 +64,6 @@ open class MainFragment : Fragment(){
             setHasFixedSize(true)
             layoutManager = LinearLayoutManager(context)
 
-//            if(OnOffRealm.onOff){
-//                favoriteBtnFolse.visibility = VISIBLE
-//                favoriteBtnTrue.visibility = INVISIBLE
-//            }else{
-//                favoriteBtnFolse.visibility = INVISIBLE
-//                favoriteBtnTrue.visibility = VISIBLE
-//            }
         }
     }
 
@@ -113,8 +104,6 @@ private fun updateData() {
             }
         }
     })
-
-
 }
 
 //    private fun initScroll() {

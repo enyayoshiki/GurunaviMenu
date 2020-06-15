@@ -7,12 +7,11 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import io.realm.Realm
-import io.realm.Sort
 import kotlinx.android.synthetic.main.child_fragment.*
 
 class FavoriteFragment : Fragment() {
 
-    private lateinit var realm: Realm
+
     private lateinit var customAdapter: RealmRecyclerViewAdapter
 
 
@@ -23,16 +22,10 @@ class FavoriteFragment : Fragment() {
         return inflater.inflate(R.layout.child_fragment, container, false)
     }
 
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
-        realm = Realm.getDefaultInstance()
-    }
-
     override fun onResume() {
         super.onResume()
-        val realmResults = realm.where(com.example.gurunavimenu.Realm::class.java)
-            .findAll()
-            .sort("id", Sort.DESCENDING)
+        val realmResults = FavoriteStore.findAll()
+
         activity?.also {
             customAdapter = RealmRecyclerViewAdapter(realmResults)
         }
@@ -43,11 +36,6 @@ class FavoriteFragment : Fragment() {
         }
     }
 
-
-    override fun onDestroy() {
-        super.onDestroy()
-        realm.close()
-    }
 
     companion object {
         fun newInstance(position: Int): FavoriteFragment {
