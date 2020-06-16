@@ -1,30 +1,30 @@
 package com.example.gurunavimenu
 
-import android.util.Log
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 
-abstract class NextScrollListener(private val layoutManager: LinearLayoutManager): RecyclerView.OnScrollListener() {
+abstract class NextScrollListener() : RecyclerView.OnScrollListener() {
 
 
-
-    private var visibleItemCount: Int = -1
-    private var totalItemCount: Int = -1
-    private var firstVisibleItem: Int = -1
+    var isLoading = false
 
     override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
         super.onScrolled(recyclerView, dx, dy)
+        if (dx == 0 && dy == 0)
+            return
+        if (isLoading)
+            return
 
-        visibleItemCount = recyclerView?.childCount ?: 0
-        totalItemCount = layoutManager.itemCount
-        firstVisibleItem = layoutManager.findFirstVisibleItemPosition()
+        val customAdapter = recyclerView.adapter ?: return
+        val layoutManager = recyclerView.layoutManager as? LinearLayoutManager ?: return
+        val totalItemCount = customAdapter.itemCount
+        val lastVisibleItem = layoutManager.findLastVisibleItemPosition() +1
 
-
-        if (firstVisibleItem + visibleItemCount >= totalItemCount) {
+        if (lastVisibleItem >= totalItemCount) {
+            isLoading = true
             onLoadMore()
         }
     }
-
-
+    
     abstract fun onLoadMore()
 }

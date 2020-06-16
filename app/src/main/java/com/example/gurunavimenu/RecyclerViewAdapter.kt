@@ -1,7 +1,6 @@
 package com.example.gurunavimenu
 
 
-import android.annotation.SuppressLint
 import android.content.Context
 import android.view.LayoutInflater
 import android.view.ViewGroup
@@ -21,7 +20,7 @@ class RecyclerViewAdapter(private val context: Context) :
 
     fun refresh(list: List<Rest>) {
         items.apply {
-            if (items.size > 10) {
+            if (list.size > 10) {
                 addAll(list)
             } else
                 clear()
@@ -48,10 +47,9 @@ class RecyclerViewAdapter(private val context: Context) :
     }
 
 
-    @SuppressLint("WrongConstant")
     private fun onBindViewHolder(holder: ItemViewHolder, position: Int) {
 
-        realm = Realm.getDefaultInstance()
+        realm= Realm.getDefaultInstance()
 
         val data = items[position]
         Picasso.get().load(data.image_url.qrcode).into(holder.rImage)
@@ -93,11 +91,6 @@ class RecyclerViewAdapter(private val context: Context) :
                 favoriteBtnTrue.Visible(realmResults !== null)
             }
         }
-    }
-
-    override fun onDetachedFromRecyclerView(recyclerView: RecyclerView) {
-        super.onDetachedFromRecyclerView(recyclerView)
-        realm.close()
     }
 }
 

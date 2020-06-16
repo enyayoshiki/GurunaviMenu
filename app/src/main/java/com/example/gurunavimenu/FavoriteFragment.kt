@@ -24,6 +24,8 @@ class FavoriteFragment : Fragment() {
 
     override fun onResume() {
         super.onResume()
+        swipeRefreshLayout.isRefreshing = false
+
         val realmResults = FavoriteStore.findAll()
 
         activity?.also {

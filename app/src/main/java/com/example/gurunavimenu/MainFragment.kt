@@ -10,17 +10,22 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.LinearLayoutManager
-import io.realm.Realm
 import kotlinx.android.synthetic.main.child_fragment.*
 import java.io.IOException
 
-open class MainFragment : Fragment(){
+open class MainFragment : Fragment() {
 
     var loadPage = 1
     private lateinit var customAdapter: RecyclerViewAdapter
     private val handler = Handler()
-    private lateinit var realm: Realm
+    var items = mutableListOf<Rest>()
 
+    private val scrollListener = object : NextScrollListener() {
+        override fun onLoadMore() {
+            loadPage++
+            updateData()
+        }
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -32,7 +37,6 @@ open class MainFragment : Fragment(){
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        realm = Realm.getDefaultInstance()
         initialize()
     }
 
@@ -44,12 +48,13 @@ open class MainFragment : Fragment(){
         updateData()
         initRecyclerView()
         initSwipeRefreshLayout()
-        //    initScroll()
     }
 
 
     private fun initSwipeRefreshLayout() {
         swipeRefreshLayout.setOnRefreshListener {
+            items.clear()
+            loadPage = 1
             updateData()
         }
     }
@@ -63,62 +68,48 @@ open class MainFragment : Fragment(){
             adapter = customAdapter
             setHasFixedSize(true)
             layoutManager = LinearLayoutManager(context)
-
+            addOnScrollListener(scrollListener)
         }
     }
 
 
-private fun updateData() {
-    val client = OkHttpClient()
-    val request = Request.Builder()
-        .url("https://api.gnavi.co.jp/RestSearchAPI/v3/?keyid=10d7139a174395ebb2a656fad8ef098a&offset_page=${loadPage}")
-        .build()
-    client.newCall(request).enqueue(object : Callback {
-        override fun onFailure(call: Call, e: IOException) {
-            handler.post {
-                swipeRefreshLayout.isRefreshing = false
-                customAdapter.refresh(listOf())
-            }
-        }
-
-        override fun onResponse(call: Call, response: Response) {
-            var items = mutableListOf<Rest>()
-            var result: GurunaviResponse? = null
-            response.body?.string()?.also {
-                val gson = Gson()
-                result = gson.fromJson(it, GurunaviResponse::class.java)
-
-            }
-            handler.post {
-                result?.also {
-                    if (loadPage == 1) {
-                        customAdapter.refresh(it.rest)
-                        items.addAll(it.rest)
-                    } else {
-                        items.addAll(it.rest)
-                        customAdapter.refresh(items)
-                    }
-                } ?: run {
+    private fun updateData() {
+        val client = OkHttpClient()
+        val request = Request.Builder()
+            .url("https://api.gnavi.co.jp/RestSearchAPI/v3/?keyid=10d7139a174395ebb2a656fad8ef098a&offset_page=${loadPage}")
+            .build()
+        client.newCall(request).enqueue(object : Callback {
+            override fun onFailure(call: Call, e: IOException) {
+                handler.post {
+                    swipeRefreshLayout.isRefreshing = false
                     customAdapter.refresh(listOf())
+                    scrollListener.isLoading = false
                 }
             }
-        }
-    })
-}
 
-//    private fun initScroll() {
-//        recyclerView.addOnScrollListener(object :
-//            NextScrollListener(LinearLayoutManager(context)) {
-//            override fun onLoadMore() {
-//                loadPage++
-//                updateData()
-//            }
-//        })
-//    }
+            override fun onResponse(call: Call, response: Response) {
+                var result: GurunaviResponse? = null
+                response.body?.string()?.also {
+                    val gson = Gson()
+                    result = gson.fromJson(it, GurunaviResponse::class.java)
+                }
+                handler.post {
+                    result?.also {
+                        items.addAll(it.rest)
+                        customAdapter.refresh(items)
+                        scrollListener.isLoading = false
+                    } ?: run {
+                        customAdapter.refresh(listOf())
+                        scrollListener.isLoading = false
+                    }
+                }
+            }
+        })
+    }
 
     override fun onDestroy() {
         super.onDestroy()
-        realm.close()
+        items.clear()
     }
 }
 
