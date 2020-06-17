@@ -94,6 +94,7 @@ open class MainFragment : Fragment() {
                     result = gson.fromJson(it, GurunaviResponse::class.java)
                 }
                 handler.post {
+                    swipeRefreshLayout.isRefreshing = false
                     result?.also {
                         items.addAll(it.rest)
                         customAdapter.refresh(items)
