@@ -81,6 +81,7 @@ open class MainFragment : Fragment() {
             .build()
         client.newCall(request).enqueue(object : Callback {
             override fun onFailure(call: Call, e: IOException) {
+                e.printStackTrace()
                 handler.post {
                     swipeRefreshLayout.isRefreshing = false
                     customAdapter.refresh(listOf())
@@ -94,6 +95,7 @@ open class MainFragment : Fragment() {
                     val gson = Gson()
                     result = gson.fromJson(it, GurunaviResponse::class.java)
                 }
+                println("resultSize:${result?.rest?.size}")
                 handler.post {
                     swipeRefreshLayout.isRefreshing = false
                     result?.also {
