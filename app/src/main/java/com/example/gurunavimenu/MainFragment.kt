@@ -18,12 +18,10 @@ open class MainFragment : Fragment() {
     var loadPage = 1
     private lateinit var customAdapter: RecyclerViewAdapter
     private val handler = Handler()
-    var items = mutableListOf<Rest>()
 
     private val scrollListener = object : NextScrollListener() {
         override fun onLoadMore() {
-            loadPage++
-            updateData()
+            updateData(true)
         }
     }
 
@@ -53,8 +51,6 @@ open class MainFragment : Fragment() {
 
     private fun initSwipeRefreshLayout() {
         swipeRefreshLayout.setOnRefreshListener {
-            items.clear()
-            loadPage = 1
             updateData()
         }
     }
@@ -73,7 +69,12 @@ open class MainFragment : Fragment() {
     }
 
 
-    private fun updateData() {
+    private fun updateData(isAdd: Boolean = false) {
+        if (isAdd)
+            loadPage++
+        else
+            loadPage = 1
+        println("updateData loadPage:$loadPage")
         val client = OkHttpClient()
         val request = Request.Builder()
             .url("https://api.gnavi.co.jp/RestSearchAPI/v3/?keyid=10d7139a174395ebb2a656fad8ef098a&offset_page=${loadPage}")
@@ -96,8 +97,12 @@ open class MainFragment : Fragment() {
                 handler.post {
                     swipeRefreshLayout.isRefreshing = false
                     result?.also {
-                        items.addAll(it.rest)
-                        customAdapter.refresh(items)
+//                        items.addAll(it.rest)
+//                        customAdapter.refresh(items).
+                        if (isAdd)
+                            customAdapter.add(it.rest)
+                        else
+                            customAdapter.refresh(it.rest)
                         scrollListener.isLoading = false
                     } ?: run {
                         customAdapter.refresh(listOf())
@@ -110,7 +115,6 @@ open class MainFragment : Fragment() {
 
     override fun onDestroy() {
         super.onDestroy()
-        items.clear()
     }
 }
 

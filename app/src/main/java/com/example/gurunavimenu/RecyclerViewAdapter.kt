@@ -20,15 +20,16 @@ class RecyclerViewAdapter(private val context: Context) :
 
     fun refresh(list: List<Rest>) {
         items.apply {
-            if (list.size > 10) {
-                addAll(list)
-            } else
-                clear()
+            clear()
             addAll(list)
         }
         notifyDataSetChanged()
     }
 
+    fun add(list: List<Rest>) {
+        items.addAll(list)
+        notifyDataSetChanged()
+    }
 
     override fun getItemCount(): Int = items.size
 
