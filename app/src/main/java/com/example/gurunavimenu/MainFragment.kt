@@ -40,10 +40,10 @@ open class MainFragment : Fragment() {
 
     private fun initialize() {
         initLayout()
+        updateData()
     }
 
     private fun initLayout() {
-        updateData()
         initRecyclerView()
         initSwipeRefreshLayout()
     }
